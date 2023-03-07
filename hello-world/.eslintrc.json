@@ -1,0 +1,26 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es2021": true
+    },
+    "extends": "standard",
+    "overrides": [
+            {
+              "files": ["*.js", "*.ejs"],
+              "rules": {
+                "quotes": ["off"],
+                "semi": ["off"],
+                "comma-dangle": ["off"]
+                // "no-use-before-define": ["off"],
+                // "max-lines-per-function": ["off"]
+              }
+            }
+          ]
+    ,
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "rules": {
+    }
+}
