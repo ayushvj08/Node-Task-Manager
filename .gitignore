@@ -1,2 +1,5 @@
 hello-world/node_modules
 hello-world/package-lock.json
+
+http-server/node_modules
+http-server/package-lock.json
