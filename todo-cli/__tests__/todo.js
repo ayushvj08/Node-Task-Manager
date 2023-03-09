@@ -23,9 +23,9 @@ describe("Todo Test Suite", () => {
     expect(all.length).toBe(todosCount + 1);
   });
   //   2. Mark todo as completed
-  test("MArk a todo as completed", () => {
+  test("Mark a todo as completed", () => {
     expect(all[0].completed).toBe(false);
-    markAsComplete(all[0]);
+    markAsComplete(0);
     expect(all[0].completed).toBe(true);
   });
 });
