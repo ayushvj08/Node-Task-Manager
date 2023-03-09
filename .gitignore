@@ -3,3 +3,6 @@ hello-world/package-lock.json
 
 http-server/node_modules
 http-server/package-lock.json
+
+todo-cli/node_modules
+todo-cli/package-lock.json
