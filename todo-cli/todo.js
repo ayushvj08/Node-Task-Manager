@@ -44,7 +44,8 @@ const todoList = () => {
               : todo.dueDate
           }`
       )
-      .join("\n");
+      .join("\n")
+      .trim();
   };
 
   return {
