@@ -1,0 +1,31 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es2021": true
+    },
+    "extends": "eslint:recommended",
+    "overrides": [
+        {
+            "files": [
+                "*.js",
+                "*.ejs"
+            ],
+            "rules": {
+                "quotes": [
+                    "off"
+                ],
+                "semi": [
+                    "off"
+                ],
+                "comma-dangle": [
+                    "off"
+                ]
+            }
+        }
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "rules": {}
+}
