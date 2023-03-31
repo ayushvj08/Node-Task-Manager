@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 
 app.get("/todos", async (request, response) => {
   console.log("Todo List");
-  const todoItems = await db.Todos.getTodo();
+  const todoItems = await db.Todos.getTodos();
   response.json(todoItems);
 });
 
@@ -40,13 +40,13 @@ app.put("/todos/:id/markAsCompleted", async (request, response) => {
 });
 
 app.delete("/todos/:id", async (request, response) => {
-  console.log("Deleted todo with ID: ", request.params.id);
+  console.log("Deleting todo with ID: ", request.params.id);
   try {
     await db.Todos.destroy({ where: { id: request.params.id } });
-    return response.redirect("/todos");
+    return response.send(true);
   } catch (error) {
     console.log(error);
-    return response.status(422).json(error);
+    return response.send(false);
   }
 });
 

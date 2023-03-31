@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
 
-    static async getTodo() {
+    static async getTodos() {
       return this.findAll();
     }
     static async addTodo({ title, dueDate }) {

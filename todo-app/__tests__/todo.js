@@ -46,4 +46,18 @@ describe("Todo Test Suite", () => {
     const parsedUpdatedResponse = JSON.parse(markCompletedResponse.text);
     expect(parsedUpdatedResponse.completed).toBe(true);
   });
+
+  test("Deleting a Todo", async () => {
+    const response = await agent.post("/todos").send({
+      title: "Go Green",
+      dueDate: new Date().toISOString(),
+      completed: false,
+    });
+    const parsedResponse = JSON.parse(response.text);
+    const todoId = parsedResponse.id;
+
+    const deletedResponse = await agent.delete(`/todos/${todoId}`).send();
+
+    expect(Boolean(deletedResponse.text)).toBe(true);
+  });
 });
