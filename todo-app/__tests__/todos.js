@@ -56,8 +56,9 @@ describe("Todo Test Suite", () => {
     const parsedResponse = JSON.parse(response.text);
     const todoId = parsedResponse.id;
 
-    const deletedResponse = await agent.delete(`/todos/${todoId}`).send();
+    const deletedResponse = await agent.delete(`/todos/${todoId}`);
+    const parsedDeleteReponse = JSON.parse(deletedResponse.text);
 
-    expect(Boolean(deletedResponse.text)).toBe(true);
+    expect(parsedDeleteReponse).toBe(true);
   });
 });
