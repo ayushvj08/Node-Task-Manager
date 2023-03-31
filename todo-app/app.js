@@ -3,8 +3,22 @@ const express = require("express");
 const db = require("./models/index");
 const app = express();
 var bodyParser = require("body-parser");
+const path = require("path");
 
 app.use(bodyParser.json());
+
+app.set("view engine", "ejs");
+// eslint-disable-next-line no-undef
+app.use(express.static(path.join(__dirname, "/public")));
+
+app.get("/", async (request, response) => {
+  const allTodos = await db.Todos.getTodos();
+  if (request.accepts("html")) {
+    return response.render("index", { allTodos });
+  } else {
+    return response.json(allTodos);
+  }
+});
 
 app.get("/todos", async (request, response) => {
   console.log("Todo List");
