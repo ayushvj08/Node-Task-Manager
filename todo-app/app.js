@@ -42,11 +42,17 @@ app.put("/todos/:id/markAsCompleted", async (request, response) => {
 app.delete("/todos/:id", async (request, response) => {
   console.log("Deleting todo with ID: ", request.params.id);
   try {
-    await db.Todos.destroy({ where: { id: request.params.id } });
-    return response.send(true);
+    const todo = await db.Todos.findByPk(request.params.id);
+    console.log(todo.title);
+    if (todo) {
+      await todo.destroy();
+      return response.json(true);
+    } else {
+      return response.json(false);
+    }
   } catch (error) {
     console.log(error);
-    return response.send(false);
+    return response.status(422).json(false);
   }
 });
 
