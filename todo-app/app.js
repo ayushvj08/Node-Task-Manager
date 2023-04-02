@@ -6,7 +6,7 @@ var bodyParser = require("body-parser");
 const path = require("path");
 
 app.use(bodyParser.json());
-
+app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 // eslint-disable-next-line no-undef
 app.use(express.static(path.join(__dirname, "/public")));
@@ -29,11 +29,11 @@ app.get("/todos", async (request, response) => {
 app.post("/todos", async (request, response) => {
   console.log("Creating a new Todo ...");
   try {
-    const todo = await db.Todos.addTodo({
+    await db.Todos.addTodo({
       title: request.body.title,
       dueDate: request.body.dueDate,
     });
-    return response.json(todo);
+    return response.redirect("/");
   } catch (error) {
     console.log(error);
     return response.status(422).json(error);
