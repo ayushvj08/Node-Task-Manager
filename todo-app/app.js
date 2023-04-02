@@ -4,19 +4,33 @@ const db = require("./models/index");
 const app = express();
 var bodyParser = require("body-parser");
 const path = require("path");
+var csurf = require("tiny-csrf");
+var cookieParser = require("cookie-parser");
 
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 // eslint-disable-next-line no-undef
 app.use(express.static(path.join(__dirname, "/public")));
+app.use(cookieParser("ssh! some secret string"));
+app.use(csurf("123456789iamasecret987654321look", ["POST", "PUT", "DELETE"]));
 
 app.get("/", async (request, response) => {
-  const allTodos = await db.Todos.getTodos();
+  // const allTodos = await db.Todos.getTodos();
+  const completed = await db.Todos.findAll({ where: { completed: true } });
+  const overdue = await db.Todos.overdue();
+  const dueToday = await db.Todos.dueToday();
+  const dueLater = await db.Todos.dueLater();
   if (request.accepts("html")) {
-    return response.render("index", { allTodos });
+    return response.render("index", {
+      completed,
+      overdue,
+      dueToday,
+      dueLater,
+      csrfToken: request.csrfToken(),
+    });
   } else {
-    return response.json(allTodos);
+    return response.json({ completed, overdue, dueToday, dueLater });
   }
 });
 
@@ -40,15 +54,14 @@ app.post("/todos", async (request, response) => {
   }
 });
 
-app.put("/todos/:id/markAsCompleted", async (request, response) => {
-  console.log("Updating Todo with ID: ");
+app.put("/todos/:id", async (request, response) => {
+  console.log("Updating Todo with ID: ", request.params.id);
   const todo = await db.Todos.findByPk(request.params.id);
 
   try {
-    const updatedTodo = request.accepts("html")
-      ? await todo.toggleMarkAsCompleted()
-      : await todo.markAsCompleted();
-    return response.json(updatedTodo);
+    const updatedTodo = await todo.setCompletionStatus(request.body.completed);
+    if (request.accepts("html")) return response.json(updatedTodo);
+    else return response.redirect("/");
   } catch (error) {
     console.log(error);
     return response.status(422).json(error);

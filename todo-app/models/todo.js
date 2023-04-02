@@ -1,5 +1,5 @@
 "use strict";
-const { Model } = require("sequelize");
+const { Model, Op } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Todos extends Model {
     /**
@@ -7,6 +7,36 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
+
+    static async overdue() {
+      const overdueTodos = await Todos.findAll({
+        where: {
+          dueDate: { [Op.lt]: new Date() },
+        },
+      });
+
+      return overdueTodos;
+    }
+
+    static async dueToday() {
+      const dueTodayTodos = await Todos.findAll({
+        where: {
+          dueDate: { [Op.eq]: new Date() },
+        },
+      });
+
+      return dueTodayTodos;
+    }
+
+    static async dueLater() {
+      const dueLaterTodos = await Todos.findAll({
+        where: {
+          dueDate: { [Op.gt]: new Date() },
+        },
+      });
+
+      return dueLaterTodos;
+    }
 
     static async getTodos() {
       return this.findAll();
@@ -24,8 +54,8 @@ module.exports = (sequelize, DataTypes) => {
     markAsCompleted() {
       return this.update({ completed: true });
     }
-    toggleMarkAsCompleted() {
-      return this.update({ completed: !this.completed });
+    setCompletionStatus(bool) {
+      return this.update({ completed: bool });
     }
     // eslint-disable-next-line no-unused-vars
     static associate(models) {

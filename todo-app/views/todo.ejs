@@ -15,8 +15,9 @@
       <div class="flex w-fit my-2px-2 py-1 items-center hover:bg-purple-50">
         <input id="todo-checkbox-<%= todos[i].id %>" type="checkbox" <%=
         todos[i].completed ? "checked" : "" %> class="w-4 h-4 text-blue-600
-        text-gary-100 rounded border" onclick="updateTodo(<%= todos[i].id %>)"
-        />
+        text-gary-100 rounded border" onclick='updateTodo(<%-
+        JSON.stringify({todoID: todos[i].id, completed: !todos[i].completed})
+        %>)' />
         <label
           for="todo-checkbox-<%= todos[i].id %>"
           class="ml-2 text-sm textgray-600 cursor-pointer"
@@ -27,7 +28,7 @@
         <a
           href="#"
           class="ml-2 trash-icon hidden"
-          onclick="deleteTodo(<%= todos[i].id %>)"
+          onclick="deleteTodo(`<%= todos[i].id %>`)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
