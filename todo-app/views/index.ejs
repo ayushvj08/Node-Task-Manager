@@ -20,6 +20,16 @@
         })
         .catch((error) => console.error(error));
     }
+    function deleteTodo(id) {
+      fetch(`/todos/${id}`, {
+        method: "delete",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((res) => {
+          if (res.ok) window.location.reload();
+        })
+        .catch((error) => console.error(error));
+    }
   </script>
 
   <body>
