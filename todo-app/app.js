@@ -45,7 +45,9 @@ app.put("/todos/:id/markAsCompleted", async (request, response) => {
   const todo = await db.Todos.findByPk(request.params.id);
 
   try {
-    const updatedTodo = await todo.markAsCompleted();
+    const updatedTodo = request.accepts("html")
+      ? await todo.toggleMarkAsCompleted()
+      : await todo.markAsCompleted();
     return response.json(updatedTodo);
   } catch (error) {
     console.log(error);

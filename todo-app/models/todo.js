@@ -17,6 +17,9 @@ module.exports = (sequelize, DataTypes) => {
     markAsCompleted() {
       return this.update({ completed: true });
     }
+    toggleMarkAsCompleted() {
+      return this.update({ completed: !this.completed });
+    }
     // eslint-disable-next-line no-unused-vars
     static associate(models) {
       // define association here

@@ -9,6 +9,19 @@
 
     <title>Document</title>
   </head>
+  <script>
+    function updateTodo(id) {
+      fetch(`/todos/${id}/markAsCompleted`, {
+        method: "put",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((res) => {
+          if (res.ok) window.location.reload();
+        })
+        .catch((error) => console.error(error));
+    }
+  </script>
+
   <body>
     <div class="grid grid-cols-6">
       <div class="col-start-3 col-span-2">
@@ -41,8 +54,18 @@
             </div>
           </div>
         </form>
+        <% const overdue = allTodos.filter((todo) => todo.dueDate < new
+        Date().toISOString().slice(0, 10)); const dueToday =
+        allTodos.filter((todo) => todo.dueDate == new
+        Date().toISOString().slice(0, 10)); const dueLater =
+        allTodos.filter((todo) => todo.dueDate > new
+        Date().toISOString().slice(0, 10)) %>
 
-        <%- include('todos.ejs') %>
+        <!--  -->
+        <%- include('todo.ejs', {category: "Overdue", id: "overdue", todos:
+        overdue}) %> <%- include('todo.ejs', {category: "Due Today", id:
+        "due-today", todos: dueToday}) %> <%- include('todo.ejs', {category:
+        "Due Later", id: "due-later", todos: dueLater}) %>
       </div>
     </div>
   </body>
