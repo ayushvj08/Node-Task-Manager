@@ -16,11 +16,23 @@ app.use(cookieParser("ssh! some secret string"));
 app.use(csurf("123456789iamasecret987654321look", ["POST", "PUT", "DELETE"]));
 
 app.get("/", async (request, response) => {
-  // const allTodos = await db.Todos.getTodos();
-  const completed = await db.Todos.findAll({ where: { completed: true } });
-  const overdue = await db.Todos.overdue();
-  const dueToday = await db.Todos.dueToday();
-  const dueLater = await db.Todos.dueLater();
+  const allTodos = await db.Todos.getTodos();
+  const completed = allTodos.filter((todo) => todo.completed === true);
+  const overdue = allTodos.filter(
+    (todo) =>
+      todo.completed === false &&
+      todo.dueDate < new Date().toISOString().slice(0, 10)
+  );
+  const dueToday = allTodos.filter(
+    (todo) =>
+      todo.completed === false &&
+      todo.dueDate === new Date().toISOString().slice(0, 10)
+  );
+  const dueLater = allTodos.filter(
+    (todo) =>
+      todo.completed === false &&
+      todo.dueDate > new Date().toISOString().slice(0, 10)
+  );
   if (request.accepts("html")) {
     return response.render("index", {
       completed,
