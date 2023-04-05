@@ -53,6 +53,14 @@
   <body>
     <div class="grid grid-cols-6">
       <div class="col-start-3 col-span-2">
+        <p class="py-2">Welcome to the TO-DO Manager</p>
+        <p class="py-2">
+          New Here? <a class="text-green-600" href="/signup">Sign-Up now</a>
+        </p>
+        <p class="py-2">
+          Already Have an account?
+          <a class="text-green-600" href="/login">Login</a>
+        </p>
         <h1 class="text-2xl font-semibold text-gray-600">My Todo-list</h1>
         <form action="/todos" method="post">
           <input type="hidden" name="_csrf" value="<%- csrfToken %>" />

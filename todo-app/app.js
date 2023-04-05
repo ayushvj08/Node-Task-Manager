@@ -15,6 +15,27 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.use(cookieParser("ssh! some secret string"));
 app.use(csurf("123456789iamasecret987654321look", ["POST", "PUT", "DELETE"]));
 
+app.get("/signup", async (request, response) => {
+  return response.render("signup", {
+    csrfToken: request.csrfToken(),
+  });
+});
+
+app.post("/users", async (request, response) => {
+  try {
+    const user = await db.TodoUser.create({
+      firstname: request.body.firstname,
+      lastname: request.body.lastname,
+      email: request.body.lastname,
+      password: request.body.password,
+    });
+    return response.redirect("/");
+  } catch (error) {
+    console.log(error);
+    response.json(error).status(422);
+  }
+});
+
 app.get("/", async (request, response) => {
   // const allTodos = await db.Todos.getTodos();
   const completed = await db.Todos.completed();
