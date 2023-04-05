@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       const overdueTodos = await Todos.findAll({
         where: {
           dueDate: { [Op.lt]: new Date() },
+          completed: false,
         },
       });
 
@@ -22,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       const dueTodayTodos = await Todos.findAll({
         where: {
           dueDate: { [Op.eq]: new Date() },
+          completed: false,
         },
       });
 
@@ -32,10 +34,20 @@ module.exports = (sequelize, DataTypes) => {
       const dueLaterTodos = await Todos.findAll({
         where: {
           dueDate: { [Op.gt]: new Date() },
+          completed: false,
         },
       });
 
       return dueLaterTodos;
+    }
+    static async completed() {
+      const completedTodos = await Todos.findAll({
+        where: {
+          completed: true,
+        },
+      });
+
+      return completedTodos;
     }
 
     static async getTodos() {
