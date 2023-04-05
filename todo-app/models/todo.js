@@ -72,6 +72,9 @@ module.exports = (sequelize, DataTypes) => {
     // eslint-disable-next-line no-unused-vars
     static associate(models) {
       // define association here
+      Todos.belongsTo(models.TodoUser, {
+        foreignKey: "userId",
+      });
     }
   }
   Todos.init(
