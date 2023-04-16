@@ -1,53 +1,107 @@
-<section class="mb-2">
-  <div class="flex items-center py-1">
-    <h5><%= category %></h5>
-    <div class="ml-2">
-      <span
-        class="bg-gray-300 px-1 cursor-pointer rounded text-sm"
-        id="count-<%= id %>"
-        ><%= todos.length %></span
-      >
-    </div>
-  </div>
-  <ul class="list-none">
-    <% for(var i=0; i < todos.length; i++) { %>
-    <li class="Todo-item">
-      <div class="flex w-fit my-2px-2 py-1 items-center hover:bg-purple-50">
-        <input id="todo-checkbox-<%= todos[i].id %>" type="checkbox" <%=
-        todos[i].completed ? "checked" : "" %> class="w-4 h-4 text-blue-600
-        text-gary-100 rounded border" onclick='updateTodo(<%-
-        JSON.stringify({todoID: todos[i].id, completed: !todos[i].completed})
-        %>)' />
-        <label
-          for="todo-checkbox-<%= todos[i].id %>"
-          class="ml-2 text-sm textgray-600 cursor-pointer"
-        >
-          <%= todos[i].title %>
-        </label>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/styles.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="csrf-token" content="<%- csrfToken %>" />
 
-        <a
-          href="#"
-          class="ml-2 trash-icon hidden"
-          onclick="deleteTodo(`<%= todos[i].id %>`)"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-4 h-4"
+    <title><%- title %></title>
+  </head>
+  <script>
+    var token = document
+      .querySelector('meta[name="csrf-token"]')
+      .getAttribute("content");
+
+    function updateTodo({ todoID, completed }) {
+      fetch(`/todos/${todoID}`, {
+        method: "put",
+        credentials: "same-origin", // <-- includes cookies in the request
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          completed: completed,
+          _csrf: token,
+        }),
+      })
+        .then((res) => {
+          if (res.ok) window.location.reload();
+        })
+        .catch((error) => console.error(error));
+    }
+    function deleteTodo(id) {
+      fetch(`/todos/${id}`, {
+        method: "delete",
+        credentials: "same-origin", // <-- includes cookies in the request
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          _csrf: token,
+        }),
+      })
+        .then((res) => {
+          if (res.ok) window.location.reload();
+        })
+        .catch((error) => console.error(error));
+    }
+  </script>
+
+  <body>
+    <div class="grid mt-2 grid-cols-6">
+      <div class="col-start-3 col-span-2">
+        <div class="flex justify-between">
+          <h1 class="text-2xl font-semibold text-gray-600">My Todo-list</h1>
+          <a href="/signout" class="text-white rounded p-1 bg-blue-500"
+            >Signout</a
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-            />
-          </svg>
-        </a>
-      </div>
-    </li>
+        </div>
+        <form action="/todos" method="post">
+          <input type="hidden" name="_csrf" value="<%- csrfToken %>" />
 
-    <% } %>
-  </ul>
-</section>
+          <div class="flex gap-2 py-4">
+            <div class="flex-auto">
+              <input
+                name="title"
+                type="text"
+                placeholder="What's next ?"
+                class="border border-gray-300 text-gray-900 rounded w-full p-2 text-sm"
+                required
+              />
+            </div>
+            <div class="flex-auto">
+              <input
+                name="dueDate"
+                type="date"
+                class="border border-gray-300 text-gray-900 rounded w-full p-2 text-sm leading-4"
+                required
+              />
+            </div>
+            <div class="flex-none">
+              <button
+                type="submit"
+                class="bg-green-600 text-white px-5 py-1.5 rounded font-medium"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </form>
+        <%- include('todo.ejs', {category: "Completed", id: "completed", todos:
+        completed}) %>
+        <!--  -->
+        <%- include('todo.ejs', {category: "Overdue", id: "overdue", todos:
+        overdue}) %>
+        <!--  -->
+        <%- include('todo.ejs', {category: "Due Today", id: "due-today", todos:
+        dueToday}) %>
+        <!--  -->
+        <%- include('todo.ejs', {category: "Due Later", id: "due-later", todos:
+        dueLater}) %>
+      </div>
+    </div>
+  </body>
+</html>
