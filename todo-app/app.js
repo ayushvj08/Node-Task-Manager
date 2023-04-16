@@ -12,8 +12,12 @@ const connectEnsureLogin = require("connect-ensure-login");
 const session = require("express-session");
 const localStrategy = require("passport-local");
 const bcrypt = require("bcrypt");
-
 const saltRounds = 10;
+const flash = require("connect-flash");
+
+// eslint-disable-next-line no-undef
+app.set("views", path.join(__dirname, "views"));
+app.use(flash());
 
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
@@ -44,12 +48,15 @@ passport.use(
     (username, password, done) => {
       db.TodoUser.findOne({ where: { email: username } })
         .then(async (user) => {
-          if (!user) return done("No user found with given email address");
+          if (!user)
+            return done(null, false, {
+              message: "No user found with given email address",
+            });
           const result = await bcrypt.compare(password, user.password);
           if (result) {
             return done(null, user);
           } else {
-            return done("Invalid Password!");
+            return done(null, false, { message: "Invalid password" });
           }
         })
         .catch((error) => {
@@ -73,6 +80,11 @@ passport.deserializeUser((id, done) => {
     });
 });
 
+app.use(function (request, response, next) {
+  response.locals.messages = request.flash();
+  next();
+});
+
 app.get("/signup", async (request, response) => {
   return response.render("signup", {
     title: "Signup",
@@ -89,7 +101,10 @@ app.get("/login", async (request, response) => {
 
 app.post(
   "/session",
-  passport.authenticate("local", { failureRedirect: "/login" }),
+  passport.authenticate("local", {
+    failureFlash: true,
+    failureRedirect: "/login",
+  }),
   async (request, response) => {
     response.redirect("/todos");
   }
