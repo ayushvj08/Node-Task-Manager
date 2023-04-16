@@ -86,6 +86,9 @@ app.use(function (request, response, next) {
 });
 
 app.get("/signup", async (request, response) => {
+  if (request.user) {
+    return response.redirect("/todos");
+  }
   return response.render("signup", {
     title: "Signup",
     csrfToken: request.csrfToken(),
@@ -93,6 +96,9 @@ app.get("/signup", async (request, response) => {
 });
 
 app.get("/login", async (request, response) => {
+  if (request.user) {
+    return response.redirect("/todos");
+  }
   return response.render("login", {
     title: "Login",
     csrfToken: request.csrfToken(),
@@ -151,6 +157,9 @@ app.post("/users", async (request, response) => {
 });
 
 app.get("/", async (request, response) => {
+  if (request.user) {
+    return response.redirect("/todos");
+  }
   return response.render("index", {
     title: "Todo Application",
     csrfToken: request.csrfToken(),
