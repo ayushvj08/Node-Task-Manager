@@ -89,9 +89,16 @@ module.exports = (sequelize, DataTypes) => {
   }
   Todos.init(
     {
-      title: DataTypes.STRING,
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: true,
+          len: 5,
+        },
+      },
       dueDate: DataTypes.DATEONLY,
-      completed: DataTypes.BOOLEAN,
+      completed: { type: DataTypes.BOOLEAN, allowNull: false },
     },
     {
       sequelize,

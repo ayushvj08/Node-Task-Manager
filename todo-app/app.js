@@ -6,7 +6,7 @@ var bodyParser = require("body-parser");
 const path = require("path");
 var csurf = require("tiny-csrf");
 var cookieParser = require("cookie-parser");
-
+const sequelize = require("sequelize");
 const passport = require("passport");
 const connectEnsureLogin = require("connect-ensure-login");
 const session = require("express-session");
@@ -118,8 +118,21 @@ app.get("/signout", (request, response, next) => {
 });
 
 app.post("/users", async (request, response) => {
+  if (
+    !request.body.firstname ||
+    !request.body.email ||
+    !request.body.password
+  ) {
+    ["firstname", "email", "password"].map((param) => {
+      !request.body[param]
+        ? request.flash("error", `${param} cannot be empty`)
+        : null;
+      console.log(request.body[param]);
+    });
+    return response.redirect("/signup");
+  }
+
   const hashedPwd = await bcrypt.hash(request.body.password, saltRounds);
-  console.log(hashedPwd);
   try {
     const user = await db.TodoUser.create({
       firstname: request.body.firstname,
@@ -172,7 +185,16 @@ app.post(
   "/todos",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
-    console.log("Creating a new Todo ...", request.user);
+    if (!request.body.title || !request.body.dueDate) {
+      ["title", "dueDate"].map((param) => {
+        !request.body[param]
+          ? request.flash("error", `${param} cannot be empty`)
+          : null;
+        console.log(request.body[param]);
+      });
+
+      return response.redirect("/todos");
+    }
     try {
       await db.Todos.addTodo({
         title: request.body.title,
@@ -181,6 +203,14 @@ app.post(
       });
       return response.redirect("/todos");
     } catch (error) {
+      if (
+        error instanceof sequelize.ValidationError &&
+        error.errors[0].validatorKey === "len"
+      ) {
+        console.log(error.errors[0].validatorKey);
+        request.flash("error", `Minimum Title Length should be 5 characters!`);
+        return response.redirect("/todos");
+      }
       console.log(error);
       return response.status(422).json(error);
     }

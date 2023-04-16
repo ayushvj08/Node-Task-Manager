@@ -16,6 +16,11 @@
         class="text-center sm:col-start-3 sm:col-span-2 col-start-2 col-span-5"
       >
         <p class="py-2 mt-2 text-xl">Welcome to the TO-DO Manager</p>
+        <% if(messages && messages.error && messages.error.length > 0)  { %>
+          <% for(var i=0; i<messages.error.length; i++) { %>
+                  <div class="bg-red-500 text-white p-2 rounded m-2" ><li> <%= messages.error[i] %></li></div>
+          <% } %>
+        <% } %>
         <h6 class="py-2 text-lg">Signup as a new User</h6>
         <form action="/users" method="post">
           <input type="hidden" name="_csrf" value="<%- csrfToken %>" />
@@ -39,7 +44,6 @@
           <div class="py-3 grid grid-cols-4">
             <label for="email">Email</label>
             <input
-              required
               class="col-start-2 col-span-3 border border-gray-300 text-gray-900 rounded w-4/5 md:w-3/5 p-1 ml-2"
               type="email"
               name="email"
@@ -48,7 +52,6 @@
           <div class="py-3 grid grid-cols-4">
             <label for="password">Password</label>
             <input
-              required
               class="col-start-2 col-span-3 border border-gray-300 text-gray-900 rounded w-4/5 md:w-3/5 p-1 ml-2"
               type="password"
               name="password"
