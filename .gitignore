@@ -5,7 +5,9 @@ http-server/node_modules
 http-server/package-lock.json
 
 todo-cli/node_modules
-rough
+
+todo-app/node_modules
+
 connectDB.js
 /index.js
 /todo.js

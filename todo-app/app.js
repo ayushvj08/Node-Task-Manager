@@ -152,7 +152,10 @@ app.post("/users", async (request, response) => {
     });
   } catch (error) {
     console.log(error);
-    response.json(error).status(422);
+    if (error.name === "SequelizeUniqueConstraintError")
+      request.flash("error", error.errors[0].message);
+    response.redirect("/signup");
+    // response.json(error).status(422);
   }
 });
 
@@ -178,6 +181,7 @@ app.get(
     if (request.accepts("html")) {
       return response.render("todos", {
         title: "Todo Application",
+        username: request.user.firstname,
         completed,
         overdue,
         dueToday,
